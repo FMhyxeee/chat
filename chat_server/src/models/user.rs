@@ -88,3 +88,54 @@ fn verify_password(password: &str, password_hash: &str) -> Result<bool, AppError
 
     Ok(is_valid)
 }
+
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use anyhow::Result;
+    use sqlx_db_tester::TestPg;
+    use crate::{models::user::{hash_password, verify_password}, User};
+
+    #[test]
+    fn hash_password_and_verify_should_work() -> Result<()> {
+        let password = "hunter42";
+        let password_hash = hash_password(password)?;
+        assert_eq!(password_hash.len(), 97);
+        assert!(verify_password(password, &password_hash)?);
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn create_and_verify_user_should_work() -> Result<()> {
+        // read from .env file
+        // contenxt is DATABASE_URL=postgres://xxx:xxx@xxx:5432/chat
+        let url = include_str!("../../../.env");
+        let url = url.split('=').collect::<Vec<&str>>()[1];
+
+        let tdb = TestPg::new(
+            url.to_string(),
+            Path::new("../migrations"),
+        );
+        let pool = tdb.get_pool().await;
+        let email = "tchen@acme.org";
+        let name = "hyx";
+        let password = "hunter42";
+        let user = User::create(email, name, password, &pool).await?;
+        assert_eq!(user.email, email);
+        assert_eq!(user.fullname, name);
+        assert!(user.id > 0);
+
+        let user = User::find_by_email(email, &pool).await?;
+        assert!(user.is_some());
+        let user = user.unwrap();
+        assert_eq!(user.email, email);
+        assert_eq!(user.fullname, name);
+
+        let user = User::verify(email, password, &pool).await?;
+        assert!(user.is_some());
+
+        Ok(())
+    }
+}
