@@ -11,7 +11,7 @@ async fn main() -> anyhow::Result<()> {
     let config = AppConfig::load()?;
     let addr = format!("0.0.0.0:{}", config.server.port);
 
-    let app = get_router(config);
+    let app = get_router(config).await?;
     let listener = TcpListener::bind(&addr).await?;
     info!("Server is listening on {}", addr);
 
