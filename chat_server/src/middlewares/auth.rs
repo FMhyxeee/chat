@@ -1,12 +1,14 @@
 use axum::{
     extract::{FromRequestParts, Request, State},
+    http::StatusCode,
     middleware::Next,
-    response::Response,
+    response::{IntoResponse, Response},
 };
 use axum_extra::{
     headers::{authorization::Bearer, Authorization},
     TypedHeader,
 };
+use tracing::warn;
 
 use crate::AppState;
 

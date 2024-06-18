@@ -48,7 +48,7 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
         )
         .route("/chat/:id/messages", get(list_message_handler))
         .layer(from_fn_with_state(state.clone(), verify_token))
-        // routes dosen't need token verification
+        // routes dosn't need token verification
         .route("/signin", post(signin_handler))
         .route("/signup", post(signup_handler));
 

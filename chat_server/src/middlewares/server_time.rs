@@ -1,5 +1,14 @@
-use axum::extract::Request;
+use std::{
+    future::Future,
+    pin::Pin,
+    task::{Context, Poll},
+};
+
+use super::{REQUEST_ID_HEADER, SERVER_TIME_HEADER};
+use axum::{extract::Request, response::Response};
+use tokio::time::Instant;
 use tower::{Layer, Service};
+use tracing::warn;
 
 #[derive(Clone)]
 pub struct ServerTimeLayer;
@@ -19,7 +28,7 @@ pub struct ServerTimeMiddleware<S> {
 
 impl<S> Service<Request> for ServerTimeMiddleware<S>
 where
-    S: Service<Request, Response = Request> + Send + 'static,
+    S: Service<Request, Response = Response> + Send + 'static,
     S::Future: Send + 'static,
 {
     type Response = S::Response;
