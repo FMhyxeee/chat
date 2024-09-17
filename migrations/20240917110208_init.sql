@@ -1,12 +1,12 @@
 -- this file is used for postgresql database initialization
 -- create user table
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL PRIMARY KEY,
     fullname VARCHAR(64) NOT NULL,
     email VARCHAR(64) NOT NULL,
     -- hashed argon2 password
     password VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- create email index for users table
@@ -17,18 +17,18 @@ CREATE TYPE chat_type AS ENUM ('single', 'group', 'private_channel', 'public_cha
 
 -- create chat table
 CREATE TABLE IF NOT EXISTS chats (
-    id BIGSERIAL PRIMARY KEY AUTO_INCREMENT,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL UNIQUE,
     type chat_type NOT NULL,
 
     members BIGINT[] NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
 -- create message table
 CREATE TABLE IF NOT EXISTS messages (
-    id BIGSERIAL PRIMARY KEY ,
+    id BIGSERIAL PRIMARY KEY,
     chat_id BIGINT NOT NULL,
     sender_id BIGINT NOT NULL,
     content TEXT NOT NULL,
