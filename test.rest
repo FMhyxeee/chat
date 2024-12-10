@@ -1,0 +1,8 @@
+### index
+
+GET http://127.0.0.1:6688/
+
+
+### chat
+
+POST http://127.0.0.1:6688/api/chat
