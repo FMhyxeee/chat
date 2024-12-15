@@ -7,6 +7,7 @@ edition = "2021"
 anyhow = { workspace = true }
 argon2 = { version = "0.5.3", features = ["std"] }
 axum = { workspace = true }
+axum-extra = { version = "0.9.6", features = ["typed-header"] }
 chrono = { version = "0.4.39", features = ["serde"] }
 jwt-simple = { version = "0.12.11", default-features = false, features = ["pure-rust"] }
 serde = { workspace = true }
@@ -15,8 +16,11 @@ serde_yaml = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
+tower = "0.5.2"
+tower-http = { version = "0.6.2", features = ["compression-full", "trace"] }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
+uuid = { version = "1.11.0", features = ["v7", "serde"] }
 
 [dev-dependencies]
 http-body-util = "0.1.2"
