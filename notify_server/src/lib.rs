@@ -1,7 +1,7 @@
 use axum::{
-    Router,
     response::{Html, IntoResponse},
     routing::get,
+    Router,
 };
 use sse::sse_handler;
 

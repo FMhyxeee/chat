@@ -1,8 +1,8 @@
 use std::{convert::Infallible, time::Duration};
 
-use axum::response::{Sse, sse::Event};
-use axum_extra::{TypedHeader, headers::UserAgent};
-use futures::{Stream, stream};
+use axum::response::{sse::Event, Sse};
+use axum_extra::{headers::UserAgent, TypedHeader};
+use futures::{stream, Stream};
 use tokio_stream::StreamExt;
 use tracing::info;
 
