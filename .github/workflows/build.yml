@@ -23,7 +23,7 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: runner
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test
         ports:
