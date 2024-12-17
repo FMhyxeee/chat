@@ -104,7 +104,12 @@ impl AppState {
         use sqlx_db_tester::TestPg;
         let dk = DecodingKey::load(&config.auth.pk).context("load pk failed")?;
         let ek = EncodingKey::load(&config.auth.sk).context("load sk failed")?;
-        let server_url = config.server.db_url.to_string();
+        let post = config
+            .server
+            .db_url
+            .rfind('/')
+            .context("parse db url failed")?;
+        let server_url = &config.server.db_url[..post];
         println!("server_url: {}", server_url);
         let tdb = TestPg::new(
             server_url.to_string(),
