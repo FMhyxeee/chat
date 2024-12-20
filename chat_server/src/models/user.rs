@@ -13,7 +13,7 @@ use super::{ChatUser, Workspace};
 pub struct CreateUser {
     pub fullname: String,
     pub email: String,
-    pub workspace_name: String,
+    pub workspace: String,
     pub password: String,
 }
 
@@ -45,9 +45,9 @@ impl User {
         }
 
         // check if workspace exists, if not create it
-        let ws = match Workspace::find_by_name(&input.workspace_name, pool).await? {
+        let ws = match Workspace::find_by_name(&input.workspace, pool).await? {
             Some(ws) => ws,
-            None => Workspace::create(&input.workspace_name, 0, pool).await?,
+            None => Workspace::create(&input.workspace, 0, pool).await?,
         };
 
         let password_hash = hash_password(&input.password)?;
@@ -146,7 +146,7 @@ impl CreateUser {
     pub fn new(ws: &str, fullname: &str, email: &str, password: &str) -> Self {
         Self {
             fullname: fullname.to_string(),
-            workspace_name: ws.to_string(),
+            workspace: ws.to_string(),
             email: email.to_string(),
             password: password.to_string(),
         }
