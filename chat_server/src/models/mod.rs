@@ -6,7 +6,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
-pub(crate) use user::*;
+pub use chat::{CreateChat, UpdateChat};
+pub use user::*;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize, PartialEq)]

@@ -10,6 +10,18 @@ Content-Type: application/json
     "password": "123456"
 }
 
+### signup user
+
+POST http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+    "workspace": "acme",
+    "fullname": "Alice Chen",
+    "email": "alice@acme.org",
+    "password": "123456"
+}
+
 ### signin user (valid)
 
 POST http://localhost:6688/api/signin
@@ -55,3 +67,70 @@ Authorization: Bearer {{token}}
 
 GET http://localhost:6688/api/users
 Authorization: Bearer {{token}}
+
+
+### signup user
+
+POST http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+    "workspace": "LG",
+    "fullname": "hyx",
+    "email": "hyx@lg.com",
+    "password": "123456"
+}
+
+### signin user (invalid)
+
+# @name signin_hyx
+POST http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+    "email": "hyx@lg.com",
+    "password": "123456"
+}
+
+@token_hyx = {{signin_hyx.response.body.token}}
+
+### create chat
+
+# @name create_chat
+POST http://localhost:6688/api/chats
+Authorization: Bearer {{token_hyx}}
+Content-Type: application/json
+
+{
+    "name": "test",
+    "members": [1, 2],
+    "public": true
+}
+
+@chat_id = {{create_chat.response.body.id}}
+
+### get chat
+
+GET http://localhost:6688/api/chats/{{chat_id}}
+Authorization: Bearer {{token_hyx}}
+
+
+### get all chat
+
+GET http://localhost:6688/api/chats
+Authorization: Bearer {{token_hyx}}
+
+### update chat
+
+PATCH http://localhost:6688/api/chats/{{chat_id}}
+Authorization: Bearer {{token_hyx}}
+Content-Type: application/json
+
+{
+    "name": "test_update"
+}
+
+### delete chat
+
+DELETE http://localhost:6688/api/chats/{{chat_id}}
+Authorization: Bearer {{token_hyx}}
