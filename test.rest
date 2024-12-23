@@ -134,3 +134,32 @@ Content-Type: application/json
 
 DELETE http://localhost:6688/api/chats/{{chat_id}}
 Authorization: Bearer {{token_hyx}}
+
+
+GET http://localhost:6688/api/users
+Authorization: Bearer {{token}}
+
+
+### upload files
+
+POST http://localhost:6688/api/upload
+Authorization: Bearer {{token_hyx}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; filename="test.jpg"
+Content-Type: application/octet-stream
+
+< D:\picture\test.jpg
+--MyBoundary
+Content-Disposition: form-data; filename="hello.txt"
+Content-Type: text/plain
+
+Hello, World!
+--MyBoundary--
+
+
+### get files
+
+GET http://localhost:6688/api/files/2/096/045/e981f7c375b603d5e18f7df3417ab1ee10.jpg
+Authorization: Bearer {{token_hyx}}
