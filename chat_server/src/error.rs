@@ -19,6 +19,12 @@ pub enum AppError {
     #[error("sql error: {0}")]
     SqlxError(#[from] sqlx::Error),
 
+    #[error("create message error: {0}")]
+    CreateMessageError(String),
+
+    #[error("{0}")]
+    ChatFileError(String),
+
     #[error("create chat error: {0}")]
     CreateChatError(String),
 
@@ -61,6 +67,8 @@ impl IntoResponse for AppError {
             Self::NotFound(_) => StatusCode::NOT_FOUND,
             Self::UpdateChatError(_) => StatusCode::BAD_REQUEST,
             Self::IoError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::CreateMessageError(_) => StatusCode::BAD_REQUEST,
+            Self::ChatFileError(_) => StatusCode::BAD_REQUEST,
         };
 
         (status, Json(ErrorOutput::new(self.to_string()))).into_response()

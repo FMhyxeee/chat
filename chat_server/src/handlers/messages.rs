@@ -59,7 +59,7 @@ pub(crate) async fn upload_handler(
             continue;
         };
 
-        let file = ChatFile::new(&filename, &data);
+        let file = ChatFile::new(ws_id, &filename, &data);
         let path = file.path(&base_dir);
         if path.exists() {
             info!("File {} already exists: {:?}", filename, path);
@@ -67,7 +67,7 @@ pub(crate) async fn upload_handler(
             fs::create_dir_all(path.parent().expect("file path parent should exists")).await?;
             fs::write(path, data).await?;
         }
-        files.push(file.url(ws_id));
+        files.push(file.url());
     }
 
     Ok(Json(files))
