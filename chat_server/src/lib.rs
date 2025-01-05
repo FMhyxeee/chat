@@ -1,7 +1,7 @@
 mod config;
 mod error;
 mod handlers;
-mod middleware;
+mod middlewares;
 mod models;
 mod utils;
 
@@ -17,7 +17,7 @@ use axum::{
 pub use config::AppConfig;
 use error::AppError;
 use handlers::*;
-use middleware::{set_layer, verify_token};
+use middlewares::{set_layer, verify_chat, verify_token};
 pub use models::*;
 use sqlx::PgPool;
 use tokio::fs;
@@ -39,17 +39,21 @@ pub(crate) struct AppStateInner {
 pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
     let state = AppState::try_new(config).await?;
 
-    let api = Router::new()
-        .route("/users", get(list_chat_users_handler))
-        .route("/chats", get(list_chat_handler).post(create_chat_handler))
+    let chat = Router::new()
         .route(
-            "/chats/:id",
+            "/:id",
             get(get_chat_handler)
                 .patch(update_chat_handler)
                 .delete(delete_chat_handler)
                 .post(send_message_handler),
         )
-        .route("/chats/:id/messages", get(list_message_handler))
+        .route("/:id/messages", get(list_message_handler))
+        .layer(from_fn_with_state(state.clone(), verify_chat))
+        .route("/", get(list_chat_handler).post(create_chat_handler));
+
+    let api = Router::new()
+        .route("/users", get(list_chat_users_handler))
+        .nest("/chats", chat)
         .route("/upload", post(upload_handler))
         .route("/files/:ws_id/*path", get(file_handler))
         .layer(from_fn_with_state(state.clone(), verify_token))

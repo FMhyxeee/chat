@@ -10,7 +10,7 @@ use tower::Layer;
 use tower::Service;
 use tracing::warn;
 
-use crate::middleware::REQUEST_ID_HEADER;
+use crate::middlewares::REQUEST_ID_HEADER;
 
 use super::SERVER_TIME_HEADER;
 

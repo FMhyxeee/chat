@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
 pub use chat::{CreateChat, UpdateChat};
+pub use message::{CreateMessage, ListMessages};
 pub use user::*;
 
 #[allow(dead_code)]
