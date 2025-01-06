@@ -1,14 +1,31 @@
 -- Add migration script here
--- Add migration script here
 -- create user table
 CREATE TABLE IF NOT EXISTS users(
   id bigserial PRIMARY KEY,
+  ws_id bigint NOT NULL,
   fullname varchar(64) NOT NULL,
   email varchar(64) NOT NULL,
   -- hashed argon2 password, length 97
   password_hash varchar(97) NOT NULL,
   created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS workspaces(
+  id bigserial PRIMARY KEY,
+  name varchar(32) NOT NULL UNIQUE,
+  owner_id bigint NOT NULL REFERENCES users(id),
+  created_at timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
+-- add super user 0 and workspace 0
+BEGIN;
+INSERT INTO users (id, ws_id, email, fullname, password_hash) VALUES (0, 0, 'super@none.org', 'super user', '');
+INSERT INTO workspaces (id, name, owner_id) VALUES (0, 'none', 0);
+COMMIT;
+
+-- alter table users to add ws_id
+ALTER TABLE users
+    ADD CONSTRAINT user_ws_id_fk FOREIGN KEY (ws_id) REFERENCES workspaces(id);
 
 -- create index for users for email
 CREATE UNIQUE INDEX IF NOT EXISTS email_index ON users(email);
@@ -24,6 +41,7 @@ CREATE TYPE chat_type AS ENUM(
 -- create chat table
 CREATE TABLE IF NOT EXISTS chats(
   id bigserial PRIMARY KEY,
+  ws_id bigint NOT NULL REFERENCES workspaces(id),
   name varchar(64),
   type chat_type NOT NULL,
   -- user id list
