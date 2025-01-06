@@ -1,17 +1,17 @@
 use std::fmt;
 
-use axum::{Router, middleware::from_fn};
+use axum::{middleware::from_fn, Router};
 use server_time::ServerTimeLayer;
 use tower::ServiceBuilder;
 use tower_http::{
-    LatencyUnit,
     compression::CompressionLayer,
     trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
+    LatencyUnit,
 };
 use tracing::Level;
 
-use crate::User;
 use crate::middlewares::request_id::set_request_id;
+use crate::User;
 
 pub use auth::verify_token;
 

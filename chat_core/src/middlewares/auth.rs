@@ -5,8 +5,8 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use axum_extra::{
+    headers::{authorization::Bearer, Authorization},
     TypedHeader,
-    headers::{Authorization, authorization::Bearer},
 };
 use tracing::warn;
 
@@ -47,13 +47,13 @@ where
 #[cfg(test)]
 mod tests {
     use crate::{
-        User,
         utils::{DecodingKey, EncodingKey},
+        User,
     };
 
     use super::*;
     use anyhow::Result;
-    use axum::{Router, body::Body, middleware::from_fn_with_state, routing::get};
+    use axum::{body::Body, middleware::from_fn_with_state, routing::get, Router};
     use std::sync::Arc;
     use tower::ServiceExt;
 
