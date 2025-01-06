@@ -24,7 +24,7 @@ BEGIN
     IF TG_OP = 'INSERT' THEN
         RAISE NOTICE 'add_to_message: %', NEW;
         PERFORM
-            pg_notify("chat_message_created", row_to_json(NEW)::text);
+            pg_notify('chat_message_created', row_to_json(NEW)::text);
     END IF;
     RETURN NEW;
 END;

@@ -3,7 +3,6 @@ mod error;
 mod handlers;
 mod middlewares;
 mod models;
-mod utils;
 
 use std::{fmt, ops::Deref, sync::Arc};
 
@@ -14,14 +13,17 @@ use axum::{
     Router,
 };
 
+use chat_core::{
+    middlewares::{set_layer, verify_token, TokenVerify},
+    DecodingKey, EncodingKey, User,
+};
 pub use config::AppConfig;
 use error::AppError;
 use handlers::*;
-use middlewares::{set_layer, verify_chat, verify_token};
+use middlewares::verify_chat;
 pub use models::*;
 use sqlx::PgPool;
 use tokio::fs;
-use utils::{DecodingKey, EncodingKey};
 
 #[derive(Debug, Clone)]
 pub(crate) struct AppState {
@@ -41,13 +43,13 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
 
     let chat = Router::new()
         .route(
-            "/:id",
+            "/{id}",
             get(get_chat_handler)
                 .patch(update_chat_handler)
                 .delete(delete_chat_handler)
                 .post(send_message_handler),
         )
-        .route("/:id/messages", get(list_message_handler))
+        .route("/{id}/messages", get(list_message_handler))
         .layer(from_fn_with_state(state.clone(), verify_chat))
         .route("/", get(list_chat_handler).post(create_chat_handler));
 
@@ -55,8 +57,8 @@ pub async fn get_router(config: AppConfig) -> Result<Router, AppError> {
         .route("/users", get(list_chat_users_handler))
         .nest("/chats", chat)
         .route("/upload", post(upload_handler))
-        .route("/files/:ws_id/*path", get(file_handler))
-        .layer(from_fn_with_state(state.clone(), verify_token))
+        .route("/files/{ws_id}/{path}", get(file_handler))
+        .layer(from_fn_with_state(state.clone(), verify_token::<AppState>))
         // routes dosn't need auth
         .route("/signin", post(signin_handler))
         .route("/signup", post(signup_handler));
@@ -75,6 +77,14 @@ impl Deref for AppState {
 
     fn deref(&self) -> &Self::Target {
         &self.inner
+    }
+}
+
+impl TokenVerify for AppState {
+    type Error = AppError;
+
+    fn verify(&self, token: &str) -> Result<User, Self::Error> {
+        Ok(self.dk.verify(token)?)
     }
 }
 

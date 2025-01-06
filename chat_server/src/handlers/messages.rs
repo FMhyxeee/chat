@@ -7,7 +7,8 @@ use axum::{
 use tokio::fs;
 use tracing::{info, warn};
 
-use crate::{error::AppError, AppState, ChatFile, CreateMessage, ListMessages, User};
+use crate::{error::AppError, AppState, ChatFile, CreateMessage, ListMessages};
+use chat_core::User;
 
 pub(crate) async fn send_message_handler(
     Extension(user): Extension<User>,

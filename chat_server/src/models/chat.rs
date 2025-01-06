@@ -1,8 +1,7 @@
+use crate::{AppError, AppState};
 use serde::{Deserialize, Serialize};
 
-use crate::{error::AppError, AppState};
-
-use super::{Chat, ChatType};
+use chat_core::{Chat, ChatType};
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct CreateChat {
