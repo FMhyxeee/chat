@@ -172,7 +172,7 @@ Content-Type: application/json
 Authorization: Bearer {{token_hyx}}
 
 {
-    "content": "Hello, World!",
+    "content": "Anyone else here?",
     "files": []
 }
 
